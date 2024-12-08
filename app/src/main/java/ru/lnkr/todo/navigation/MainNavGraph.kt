@@ -1,11 +1,6 @@
 package ru.lnkr.todo.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,7 +10,10 @@ import ru.lnkr.todo.ui.TodoListScreen
 
 @Composable
 fun MainNavGraph(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = "todo_list") {
+    NavHost(
+        navController = navController,
+        startDestination = "todo_list"
+    ) {
         composable("todo_list") {
             TodoListScreen(
                 onAddClick = { navController.navigate("todo_edit") },

@@ -1,13 +1,19 @@
 package ru.lnkr.todo.ui
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -29,14 +35,11 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import ru.lnkr.todo.R
 import ru.lnkr.todo.model.TodoItem
 import ru.lnkr.todo.repository.TodoItemsRepository
 import ru.lnkr.todo.ui.theme.AppTheme
-
-fun visibilityIconOnClick() {
-
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,14 +105,42 @@ fun TodoListScreen(
             }
         }
     ) { innerPadding ->
-        Box(
+        Card(
             modifier = Modifier
-                .fillMaxSize()
+                .padding(horizontal = 8.dp)
                 .padding(innerPadding)
+                .fillMaxSize(),
+            colors = CardDefaults.cardColors(
+                containerColor = AppTheme.colors.backSecondary,
+                contentColor = AppTheme.colors.labelPrimary
+            ),
+            shape = RoundedCornerShape(6.dp),
+            elevation = CardDefaults.cardElevation(4.dp)
         ) {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                modifier = Modifier
+                    .padding(top = 20.dp)
+                    .fillMaxSize()
+                    .padding(horizontal = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
                 items(itemsList) { item ->
                     TodoItemCard(item = item) { onItemClick(item) }
+                }
+                item {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        "Новое",
+                        modifier = Modifier
+                            .padding(
+                                top = 4.dp,
+                                start = 36.dp
+                            )
+                            .clickable {
+                                onAddClick()
+                            },
+                        color = AppTheme.colors.labelTertiary
+                    )
                 }
             }
         }
