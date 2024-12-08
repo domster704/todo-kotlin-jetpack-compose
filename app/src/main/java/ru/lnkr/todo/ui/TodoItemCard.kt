@@ -1,6 +1,7 @@
 package ru.lnkr.todo.ui
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -53,51 +54,55 @@ fun TodoItemCard(item: TodoItem, onClick: () -> Unit) {
 //            defaultElevation = 16.dp
 //        ),
 //    ) {
-    Row(
-        modifier = Modifier
-            .height(IntrinsicSize.Min)
-            .fillMaxWidth()
-            .clickable { onClick() },
-    ) {
-        Checkbox(
-            checked = item.isCompleted,
-            onCheckedChange = { },
-            enabled = item.deadline != null, // TODO: check deadline
-            colors = CheckboxDefaults.colors(
-                uncheckedColor = AppTheme.colors.colorRed,
-                disabledCheckedColor = AppTheme.colors.colorGreen,
-            ),
+    Box(modifier = Modifier
+        .clickable { onClick() }) {
+        Row(
             modifier = Modifier
-                .padding(4.dp)
-                .size(12.dp)
-        )
-
-        Spacer(modifier = Modifier.width(12.dp))
-
-        Text(
-            text = item.text,
-            style = MaterialTheme.typography.bodyLarge,
-            maxLines = 3,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight()
-                .wrapContentHeight(),
-            color = Color.Black,
-        )
-
-        IconButton(
-            onClick = { },
-            modifier = Modifier
-                .size(24.dp)
+                .padding(vertical = 12.dp)
+                .height(IntrinsicSize.Min)
+                .fillMaxWidth(),
         ) {
-            Icon(
-                Icons.Outlined.Info,
-                contentDescription = "info",
-                tint = AppTheme.colors.labelTertiary
+            Checkbox(
+                checked = item.isCompleted,
+                onCheckedChange = { },
+                enabled = item.deadline != null, // TODO: check deadline
+                colors = CheckboxDefaults.colors(
+                    uncheckedColor = AppTheme.colors.colorRed,
+                    disabledCheckedColor = AppTheme.colors.colorGreen,
+                ),
+                modifier = Modifier
+                    .padding(6.dp)
+                    .size(12.dp)
             )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Text(
+                text = item.text,
+                style = MaterialTheme.typography.bodyLarge,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .wrapContentHeight(),
+                color = Color.Black,
+            )
+
+            IconButton(
+                onClick = { },
+                modifier = Modifier
+                    .size(24.dp)
+            ) {
+                Icon(
+                    Icons.Outlined.Info,
+                    contentDescription = "info",
+                    tint = AppTheme.colors.labelTertiary
+                )
+            }
         }
     }
+
 
 //    if (menuVisible) {
 //        Box(

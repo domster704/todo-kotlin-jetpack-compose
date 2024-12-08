@@ -14,5 +14,7 @@ data class TodoItem(
 )
 
 enum class Importance {
-    LOW, NORMAL, URGENT
+    NONE,
+    LOW,
+    HIGH
 }

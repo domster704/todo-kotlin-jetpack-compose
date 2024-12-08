@@ -5,37 +5,45 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-val Typography = Typography(
-    displayLarge = TextStyle(
-        fontWeight = FontWeight.Bold,
-        fontSize = 38.sp  // Large title — 38sp (жирный текст)
-    ),
-    displayMedium = TextStyle(
-        fontWeight = FontWeight.Bold,
-        fontSize = 32.sp  // Large title — 32sp
-    ),
-    titleLarge = TextStyle(
-        fontWeight = FontWeight.Bold,
-        fontSize = 20.sp  // Title — 20sp
-    ),
-    titleMedium = TextStyle(
-        fontWeight = FontWeight.Bold,
-        fontSize = 20.sp  // Title — 20sp (еще один заголовок)
-    ),
-    labelLarge = TextStyle(
+object Type {
+    val largeTitle: TextStyle = TextStyle(
+        fontSize = 32.sp,
         fontWeight = FontWeight.Normal,
-        fontSize = 14.sp  // BUTTON — 14sp
-    ),
-    bodyLarge = TextStyle(
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp  // Body — 16sp
-    ),
-    labelSmall = TextStyle(
-        fontWeight = FontWeight.Medium,
-        fontSize = 14.sp  // Subhead — 14sp
-    ),
-    labelMedium = TextStyle(
-        fontWeight = FontWeight.Medium,
-        fontSize = 20.sp  // Subhead — 20sp (жирный текст)
     )
-)
+    val largeTitleBold: TextStyle = TextStyle(
+        fontSize = 38.sp,
+        fontWeight = FontWeight.Bold,
+    )
+    val title: TextStyle = TextStyle(
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Normal,
+    )
+    val titleBold: TextStyle = TextStyle(
+        fontSize = 32.sp,
+        fontWeight = FontWeight.Bold,
+    )
+    val button: TextStyle = TextStyle(
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Normal,
+    )
+    val buttonBold: TextStyle = TextStyle(
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold,
+    )
+    val body: TextStyle = TextStyle(
+        fontSize = 16.sp,
+        fontWeight = FontWeight.Normal,
+    )
+    val bodyBold: TextStyle = TextStyle(
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold,
+    )
+    val subhead: TextStyle = TextStyle(
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Normal,
+    )
+    val subheadBold: TextStyle = TextStyle(
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold,
+    )
+}

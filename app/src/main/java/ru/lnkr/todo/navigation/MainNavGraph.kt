@@ -1,18 +1,22 @@
 package ru.lnkr.todo.navigation
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import ru.lnkr.todo.repository.TodoItemsRepository
 import ru.lnkr.todo.ui.TodoEditScreen
 import ru.lnkr.todo.ui.TodoListScreen
+import ru.lnkr.todo.ui.theme.AppTheme
 
 @Composable
 fun MainNavGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = "todo_list"
+        startDestination = "todo_list",
     ) {
         composable("todo_list") {
             TodoListScreen(

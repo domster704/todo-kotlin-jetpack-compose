@@ -1,9 +1,13 @@
 package ru.lnkr.todo.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -103,13 +107,15 @@ fun TodoListScreen(
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add Task")
             }
-        }
+        },
+        containerColor = AppTheme.colors.backPrimary,
     ) { innerPadding ->
         Card(
             modifier = Modifier
                 .padding(horizontal = 8.dp)
+                .padding(bottom = 8.dp)
                 .padding(innerPadding)
-                .fillMaxSize(),
+                .fillMaxWidth(),
             colors = CardDefaults.cardColors(
                 containerColor = AppTheme.colors.backSecondary,
                 contentColor = AppTheme.colors.labelPrimary
@@ -119,16 +125,19 @@ fun TodoListScreen(
         ) {
             LazyColumn(
                 modifier = Modifier
-                    .padding(top = 20.dp)
-                    .fillMaxSize()
-                    .padding(horizontal = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .fillMaxWidth()
+                    .padding(
+                        vertical = 24.dp,
+                        horizontal = 16.dp
+                    ),
+//                verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
                 items(itemsList) { item ->
                     TodoItemCard(item = item) { onItemClick(item) }
                 }
                 item {
                     Spacer(modifier = Modifier.height(16.dp))
+
                     Text(
                         "Новое",
                         modifier = Modifier

@@ -13,11 +13,16 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            AppTheme {
-                val navController = rememberNavController()
-                MainNavGraph(navController = navController)
-            }
+            MainActivityComponent()
         }
+    }
+}
+
+@Composable
+fun MainActivityComponent() {
+    AppTheme {
+        val navController = rememberNavController()
+        MainNavGraph(navController = navController)
     }
 }
 
@@ -25,8 +30,5 @@ class MainActivity : ComponentActivity() {
 @Preview(showBackground = true)
 @Composable
 fun MainActivityPreview() {
-    AppTheme {
-        val navController = rememberNavController()
-        MainNavGraph(navController = navController)
-    }
+    MainActivityComponent()
 }
