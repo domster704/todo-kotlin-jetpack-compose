@@ -405,6 +405,8 @@ fun DatePickerModal(
                 subheadContentColor = AppTheme.colors.colorBlue,
                 headlineContentColor = AppTheme.colors.colorBlue,
                 navigationContentColor = AppTheme.colors.colorBlue,
+                dayContentColor = AppTheme.colors.labelPrimary,
+                weekdayContentColor = AppTheme.colors.labelTertiary,
 
                 todayContentColor = AppTheme.colors.colorBlue,
                 todayDateBorderColor = AppTheme.colors.colorBlue,

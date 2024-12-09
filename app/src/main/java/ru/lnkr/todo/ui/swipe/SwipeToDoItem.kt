@@ -38,11 +38,11 @@ fun SwipeToDoItem(
         positionalThreshold = { it * .25f }
     )
 
-//    LaunchedEffect(dismissState.currentValue) {
-//        if (dismissState.currentValue != SwipeToDismissBoxValue.Settled) {
-//            dismissState.snapTo(SwipeToDismissBoxValue.Settled)
-//        }
-//    }
+    LaunchedEffect(dismissState.currentValue) {
+        if (dismissState.currentValue != SwipeToDismissBoxValue.Settled) {
+            dismissState.snapTo(SwipeToDismissBoxValue.Settled)
+        }
+    }
 
     SwipeToDismissBox(
         state = dismissState,
