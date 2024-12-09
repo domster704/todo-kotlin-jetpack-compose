@@ -1,11 +1,12 @@
 package ru.lnkr.todo.repository
 
+import androidx.compose.runtime.mutableStateOf
 import ru.lnkr.todo.model.Importance
 import ru.lnkr.todo.model.TodoItem
 import java.util.Calendar
 
 object TodoItemsRepository {
-    private var viewModel = TodoViewModel()
+    var viewModel = TodoViewModel()
 
     var completedItemsVisibility: Boolean = viewModel.isVisible
         get() = viewModel.isVisible
@@ -238,6 +239,9 @@ object TodoItemsRepository {
             )
         )
     }
+
+    var items = mutableStateOf(viewModel.items)
+        private set
 
     fun getTodoItems(): List<TodoItem> {
         return viewModel.items;

@@ -1,5 +1,6 @@
 package ru.lnkr.todo.ui
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import ru.lnkr.todo.R
 import ru.lnkr.todo.model.TodoItem
 import ru.lnkr.todo.repository.TodoItemsRepository
+import ru.lnkr.todo.ui.swipe.SwipeToDoItem
 import ru.lnkr.todo.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,10 +53,6 @@ fun TodoListScreen(
     var itemsList by remember { mutableStateOf(TodoItemsRepository.getTodoItems()) }
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-
-    LaunchedEffect(completedItemsVisibility) {
-        itemsList = TodoItemsRepository.getTodoItems()
-    }
 
     Scaffold(
         modifier = Modifier
@@ -79,6 +77,7 @@ fun TodoListScreen(
                     IconButton({
                         completedItemsVisibility = !completedItemsVisibility
                         TodoItemsRepository.setVisibilityOfCompletedItems(completedItemsVisibility)
+                        itemsList = TodoItemsRepository.getTodoItems()
                     }) {
                         Icon(
                             painterResource(
@@ -126,14 +125,18 @@ fun TodoListScreen(
                         vertical = 24.dp,
                         horizontal = 16.dp
                     ),
-//                verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
                 items(itemsList) { item ->
-                    TodoItemCard(item = item) { onItemClick(item) }
+                    SwipeToDoItem(
+                        item,
+                        onItemClick,
+                        onSwipeFinished = {
+                            itemsList = TodoItemsRepository.getTodoItems()
+                        }
+                    )
                 }
                 item {
                     Spacer(modifier = Modifier.height(16.dp))
-
                     Text(
                         "Новое",
                         modifier = Modifier

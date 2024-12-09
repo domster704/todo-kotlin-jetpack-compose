@@ -1,5 +1,6 @@
 package ru.lnkr.todo.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,16 +15,23 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxColors
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,18 +43,23 @@ import ru.lnkr.todo.R
 import ru.lnkr.todo.model.Importance
 import ru.lnkr.todo.model.TodoItem
 import ru.lnkr.todo.repository.TodoItemsRepository
+import ru.lnkr.todo.ui.swipe.DismissBackground
 import ru.lnkr.todo.ui.theme.AppTheme
 import ru.lnkr.todo.util.Util
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodoItemCard(item: TodoItem, onClick: () -> Unit) {
     Box(modifier = Modifier
-        .clickable { onClick() }) {
+        .clip(RoundedCornerShape(4.dp))
+        .background(AppTheme.colors.backSecondary)
+        .clickable { onClick() }
+    ) {
         Row(
             modifier = Modifier
                 .padding(vertical = 12.dp)
                 .height(IntrinsicSize.Min)
-                .fillMaxWidth(),
+                .fillMaxWidth()
         ) {
             /**
              * enabled - high importance
