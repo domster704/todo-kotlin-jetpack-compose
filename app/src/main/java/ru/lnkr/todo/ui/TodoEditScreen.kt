@@ -2,21 +2,26 @@ package ru.lnkr.todo.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,11 +30,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,12 +49,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import ru.lnkr.todo.model.Importance
 import ru.lnkr.todo.model.TodoItem
 import ru.lnkr.todo.repository.TodoItemsRepository
 import ru.lnkr.todo.ui.theme.AppTheme
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 data class ImportanceViewData(
     val text: String,
@@ -59,31 +70,14 @@ fun TodoEditScreen(
     item: TodoItem?,
     onSave: (TodoItem) -> Unit,
     onClose: () -> Unit,
-    onDelete: (Any?) -> Unit = {},
-    onComplete: (Any?) -> Unit = {}
+    onDelete: (String) -> Unit = {},
+    onComplete: (String) -> Unit = {}
 ) {
     var itemText by remember { mutableStateOf(item?.text.orEmpty()) }
     var importance by remember { mutableStateOf(item?.importance ?: Importance.NONE) }
+    var deadline by remember { mutableStateOf(Date()) }
 
     var expanded by remember { mutableStateOf(false) }
-
-    val importanceDictionary = mapOf(
-        Importance.NONE to ImportanceViewData(
-            "Нет",
-            AppTheme.colors.labelPrimary,
-            AppTheme.colors.labelTertiary
-        ),
-        Importance.LOW to ImportanceViewData(
-            "Низкий",
-            AppTheme.colors.labelPrimary,
-            AppTheme.colors.labelTertiary
-        ),
-        Importance.HIGH to ImportanceViewData(
-            "!! Высокий",
-            AppTheme.colors.colorRed,
-            AppTheme.colors.colorRed
-        )
-    )
 
     Scaffold(
         topBar = {
@@ -173,53 +167,243 @@ fun TodoEditScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Column {
-                    Text(
-                        "Важность",
-                        style = AppTheme.typography.body,
-                        color = AppTheme.colors.labelPrimary
-                    )
+                ImportanceChooser(
+                    importance,
+                    expanded,
+                    { newImportance ->
+                        importance = newImportance
+                    },
+                    { newExpanded ->
+                        expanded = newExpanded
+                    })
+                Spacer(modifier = Modifier.height(8.dp))
+                HorizontalDivider()
+                Spacer(modifier = Modifier.height(8.dp))
 
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    Text(
-                        importanceDictionary[importance]!!.text,
-                        color = importanceDictionary[importance]!!.labelColor,
-                        style = AppTheme.typography.button,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                expanded = true
-                            }
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    HorizontalDivider()
-
-                    DropdownMenu(
-                        modifier = Modifier.background(AppTheme.colors.backElevated),
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false },
-                    ) {
-                        Importance.entries.forEach { importanceOption ->
-                            DropdownMenuItem(
-                                text = {
-                                    Text(importanceDictionary[importanceOption]!!.text)
-                                },
-                                colors = MenuDefaults.itemColors(
-                                    textColor = importanceDictionary[importanceOption]!!.color,
-                                ),
-                                onClick = {
-                                    importance = importanceOption
-                                    expanded = false
-                                },
-                            )
-                        }
-                    }
+                DeadlineChooser(deadline) { newDeadline ->
+                    deadline = newDeadline
                 }
 
+                Spacer(modifier = Modifier.height(24.dp))
+                HorizontalDivider()
+                Spacer(modifier = Modifier.height(8.dp))
+
+                TextButton(
+                    onClick = {
+                        item?.let { onDelete(it.id) }
+                    },
+                    contentPadding = PaddingValues(0.dp),
+                    enabled = item != null,
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = AppTheme.colors.colorRed,
+                        containerColor = Color.Transparent,
+                        disabledContainerColor = Color.Transparent,
+                    )
+                ) {
+                    Icon(
+                        Icons.Filled.Delete,
+                        contentDescription = "Delete",
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        "Удалить",
+                        style = AppTheme.typography.body,
+                    )
+                }
             }
         }
     }
+}
+
+@Composable
+fun ImportanceChooser(
+    importance: Importance,
+    expanded: Boolean,
+    changeImportance: (Importance) -> Unit,
+    changeExpanded: (Boolean) -> Unit,
+) {
+    val importanceDictionary = mapOf(
+        Importance.NONE to ImportanceViewData(
+            "Нет",
+            AppTheme.colors.labelPrimary,
+            AppTheme.colors.labelTertiary
+        ),
+        Importance.LOW to ImportanceViewData(
+            "Низкий",
+            AppTheme.colors.labelPrimary,
+            AppTheme.colors.labelTertiary
+        ),
+        Importance.HIGH to ImportanceViewData(
+            "!! Высокий",
+            AppTheme.colors.colorRed,
+            AppTheme.colors.colorRed
+        )
+    )
+
+    Column {
+        Text(
+            "Важность",
+            style = AppTheme.typography.body,
+            color = AppTheme.colors.labelPrimary
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Text(
+            importanceDictionary[importance]!!.text,
+            color = importanceDictionary[importance]!!.labelColor,
+            style = AppTheme.typography.button,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { changeExpanded(!expanded) }
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+
+        DropdownMenu(
+            modifier = Modifier.background(AppTheme.colors.backElevated),
+            expanded = expanded,
+            onDismissRequest = { changeExpanded(false) },
+        ) {
+            Importance.entries.forEach { importanceOption ->
+                DropdownMenuItem(
+                    text = {
+                        Text(importanceDictionary[importanceOption]!!.text)
+                    },
+                    colors = MenuDefaults.itemColors(
+                        textColor = importanceDictionary[importanceOption]!!.color,
+                    ),
+                    onClick = {
+                        changeImportance(importanceOption)
+                        changeExpanded(false)
+                    },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun DeadlineChooser(
+    deadline: Date,
+    deadlineOnChange: (Date) -> Unit,
+) {
+    var isDeadline by remember { mutableStateOf(false) }
+
+    var isShownDatePicker by remember { mutableStateOf(false) }
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                "Сделать до",
+                style = AppTheme.typography.body,
+                color = AppTheme.colors.labelPrimary
+            )
+            if (isDeadline) {
+                Text(
+                    convertDateToString(deadline),
+                    color = AppTheme.colors.colorBlue,
+                    style = AppTheme.typography.button,
+                    modifier = Modifier.clickable {
+                        isShownDatePicker = true
+                    }
+                )
+            }
+        }
+
+        Switch(
+            checked = isDeadline,
+            onCheckedChange = { isDeadline = !isDeadline },
+            colors = SwitchDefaults.colors(
+                checkedBorderColor = Color.Transparent,
+                checkedThumbColor = AppTheme.colors.colorBlue,
+                checkedTrackColor = AppTheme.colors.colorBlueTransparent,
+
+                uncheckedThumbColor = AppTheme.colors.backElevated,
+                uncheckedBorderColor = Color.Transparent,
+                uncheckedTrackColor = AppTheme.colors.supportOverlay
+            )
+        )
+
+        if (isShownDatePicker) {
+            DatePickerModal(deadline.time, { selectedDateMillis ->
+                deadlineOnChange(Date(selectedDateMillis))
+            }, {
+                isShownDatePicker = false
+            })
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePickerModal(
+    dateMillis: Long?,
+    onDateSelected: (Long) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val datePickerState = rememberDatePickerState(initialSelectedDateMillis = dateMillis)
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = {
+                if (datePickerState.selectedDateMillis == null) {
+                    return@TextButton
+                }
+
+                onDateSelected(datePickerState.selectedDateMillis!!)
+                onDismiss()
+            }) {
+                Text(
+                    "ОК",
+                    color = AppTheme.colors.colorBlue,
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(
+                    "Отмена",
+                    color = AppTheme.colors.colorBlue,
+                )
+            }
+        },
+        colors = DatePickerDefaults.colors(
+            containerColor = AppTheme.colors.backSecondary,
+        )
+    ) {
+        DatePicker(
+            state = datePickerState,
+            colors = DatePickerDefaults.colors(
+                containerColor = AppTheme.colors.backSecondary,
+                titleContentColor = AppTheme.colors.colorBlue,
+                subheadContentColor = AppTheme.colors.colorBlue,
+                headlineContentColor = AppTheme.colors.colorBlue,
+                navigationContentColor = AppTheme.colors.colorBlue,
+
+                todayContentColor = AppTheme.colors.colorBlue,
+                todayDateBorderColor = AppTheme.colors.colorBlue,
+                currentYearContentColor = AppTheme.colors.colorBlue,
+
+                selectedDayContentColor = AppTheme.colors.colorWhite,
+                selectedDayContainerColor = AppTheme.colors.colorBlue,
+
+                selectedYearContentColor = AppTheme.colors.colorWhite,
+                selectedYearContainerColor = AppTheme.colors.colorBlue,
+            )
+        )
+    }
+}
+
+fun convertDateToString(date: Date): String {
+    val formatter = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+    return formatter.format(date)
 }
 
 @Preview(showBackground = true)
