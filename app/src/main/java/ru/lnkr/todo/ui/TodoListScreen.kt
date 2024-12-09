@@ -1,6 +1,5 @@
 package ru.lnkr.todo.ui
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,7 +25,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,8 +44,8 @@ import ru.lnkr.todo.ui.theme.AppTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodoListScreen(
-    onAddClick: () -> Unit,
-    onItemClick: (TodoItem) -> Unit,
+    onAddClick: () -> Unit = {},
+    onItemClick: (TodoItem) -> Unit = {},
 ) {
     var completedItemsVisibility by remember { mutableStateOf(false) }
     var itemsList by remember { mutableStateOf(TodoItemsRepository.getTodoItems()) }
@@ -159,6 +157,6 @@ fun TodoListScreen(
 @Composable
 fun TodoListScreenPreview() {
     AppTheme {
-        TodoListScreen({}, {})
+        TodoListScreen()
     }
 }

@@ -56,9 +56,7 @@ import ru.lnkr.todo.model.TodoItem
 import ru.lnkr.todo.repository.TodoItemsRepository
 import ru.lnkr.todo.ui.theme.AppTheme
 import ru.lnkr.todo.util.Util
-import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 
 data class ImportanceViewData(
     val text: String,

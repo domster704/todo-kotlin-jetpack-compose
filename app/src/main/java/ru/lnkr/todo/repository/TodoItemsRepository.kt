@@ -6,11 +6,7 @@ import ru.lnkr.todo.model.TodoItem
 import java.util.Calendar
 
 object TodoItemsRepository {
-    var viewModel = TodoViewModel()
-
-    var completedItemsVisibility: Boolean = viewModel.isVisible
-        get() = viewModel.isVisible
-        private set
+    private var viewModel = TodoViewModel()
 
     init {
         viewModel.saveItem(
