@@ -21,10 +21,8 @@ val LabelDisableDark = Color(0x26ffffff)
 
 // --------------
 val ColorRedLight = Color(0xffFF3B30)
-val ColorRedLightTransparent = Color(0x29FF3B30)
 val ColorGreenLight = Color(0xFF34C759)
 val ColorBlueLight = Color(0xFF007AFF)
-val ColorBlueLightTransparent = Color(0x4D007AFF)
 val ColorGrayLight = Color(0xFF8E8E93)
 val ColorGrayLightLight = Color(0xFFD1D1D6)
 val ColorWhiteLight = Color(0xffffffff)
@@ -44,3 +42,7 @@ val BackElevatedLight = Color(0xffffffff)
 val BackPrimaryDark = Color(0xFF161618)
 val BackSecondaryDark = Color(0xFF252528)
 val BackElevatedDark = Color(0xFF3C3C3F)
+
+
+val ColorRedTransparent = Color(0x29FF3B30)
+val ColorBlueTransparent = Color(0x4D007AFF)

@@ -81,31 +81,53 @@ val LocalCustomTypography = staticCompositionLocalOf {
     )
 }
 
+val lightColors = CustomColors(
+    supportSeparator = SupportSeparatorLight,
+    supportOverlay = SupportOverlayLight,
+    labelPrimary = LabelPrimaryLight,
+    labelSecondary = LabelSecondaryLight,
+    labelTertiary = LabelTertiaryLight,
+    labelDisable = LabelDisableLight,
+    colorRed = ColorRedLight,
+    colorRedTransparent = ColorRedTransparent,
+    colorGreen = ColorGreenLight,
+    colorBlue = ColorBlueLight,
+    colorBlueTransparent = ColorBlueTransparent,
+    colorGray = ColorGrayLight,
+    colorGrayLight = ColorGrayLightLight,
+    colorWhite = ColorWhiteLight,
+    backPrimary = BackPrimaryLight,
+    backSecondary = BackSecondaryLight,
+    backElevated = BackElevatedLight,
+)
+
+val darkColors = CustomColors(
+    supportSeparator = SupportSeparatorDark,
+    supportOverlay = SupportOverlayDark,
+    labelPrimary = LabelPrimaryDark,
+    labelSecondary = LabelSecondaryDark,
+    labelTertiary = LabelTertiaryDark,
+    labelDisable = LabelDisableDark,
+    colorRed = ColorRedDark,
+    colorRedTransparent = ColorRedTransparent,
+    colorGreen = ColorGreenDark,
+    colorBlue = ColorBlueDark,
+    colorBlueTransparent = ColorBlueTransparent,
+    colorGray = ColorGrayDark,
+    colorGrayLight = ColorGrayLightDark,
+    colorWhite = ColorWhiteDark,
+    backPrimary = BackPrimaryDark,
+    backSecondary = BackSecondaryDark,
+    backElevated = BackElevatedDark,
+)
+
 @Composable
 fun AppTheme(
-    useDarkTheme: Boolean = isSystemInDarkTheme(),
+    isDarkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
-    val extendedColors = CustomColors(
-        supportSeparator = SupportSeparatorLight,
-        supportOverlay = SupportOverlayLight,
-        labelPrimary = LabelPrimaryLight,
-        labelSecondary = LabelSecondaryLight,
-        labelTertiary = LabelTertiaryLight,
-        labelDisable = LabelDisableLight,
-        colorRed = ColorRedLight,
-        colorRedTransparent = ColorRedLightTransparent,
-        colorGreen = ColorGreenLight,
-        colorBlue = ColorBlueLight,
-        colorBlueTransparent = ColorBlueLightTransparent,
-        colorGray = ColorGrayLight,
-        colorGrayLight = ColorGrayLightLight,
-        colorWhite = ColorWhiteLight,
-        backPrimary = BackPrimaryLight,
-        backSecondary = BackSecondaryLight,
-        backElevated = BackElevatedLight,
-    )
+    val colors = if (isDarkTheme) darkColors else lightColors
 
     val customTypography = CustomTypography(
         largeTitle = Type.largeTitle,
@@ -122,7 +144,7 @@ fun AppTheme(
 
 
     CompositionLocalProvider(
-        LocalCustomColors provides extendedColors,
+        LocalCustomColors provides colors,
         LocalCustomTypography provides customTypography,
     ) {
 //        MaterialTheme(

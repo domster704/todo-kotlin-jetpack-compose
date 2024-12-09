@@ -128,7 +128,9 @@ fun TodoEditScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = { onClose() }) {
-                        Icon(Icons.Default.Close, contentDescription = "Back")
+                        Icon(Icons.Default.Close,
+                            contentDescription = "Back",
+                            tint = AppTheme.colors.labelPrimary)
                     }
                 },
             )
