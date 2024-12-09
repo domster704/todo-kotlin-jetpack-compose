@@ -1,5 +1,6 @@
 package ru.lnkr.todo.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
@@ -38,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import ru.lnkr.todo.model.Importance
 import ru.lnkr.todo.model.TodoItem
@@ -46,7 +49,8 @@ import ru.lnkr.todo.ui.theme.AppTheme
 
 data class ImportanceViewData(
     val text: String,
-    val color: Color
+    val color: Color,
+    val labelColor: Color
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,21 +63,24 @@ fun TodoEditScreen(
     onComplete: (Any?) -> Unit = {}
 ) {
     var itemText by remember { mutableStateOf(item?.text.orEmpty()) }
-    var importance by remember { mutableStateOf(item?.importance ?: Importance.LOW) }
+    var importance by remember { mutableStateOf(item?.importance ?: Importance.NONE) }
 
     var expanded by remember { mutableStateOf(false) }
 
     val importanceDictionary = mapOf(
         Importance.NONE to ImportanceViewData(
             "Нет",
-            AppTheme.colors.labelPrimary
+            AppTheme.colors.labelPrimary,
+            AppTheme.colors.labelTertiary
         ),
         Importance.LOW to ImportanceViewData(
             "Низкий",
-            AppTheme.colors.labelPrimary
+            AppTheme.colors.labelPrimary,
+            AppTheme.colors.labelTertiary
         ),
         Importance.HIGH to ImportanceViewData(
             "!! Высокий",
+            AppTheme.colors.colorRed,
             AppTheme.colors.colorRed
         )
     )
@@ -164,35 +171,48 @@ fun TodoEditScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
+                Column {
                     Text(
                         "Важность",
                         style = AppTheme.typography.body,
                         color = AppTheme.colors.labelPrimary
                     )
 
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Text(
+                        importanceDictionary[importance]!!.text,
+                        color = importanceDictionary[importance]!!.labelColor,
+                        style = AppTheme.typography.button,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                expanded = true
+                            }
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    HorizontalDivider()
+
                     DropdownMenu(
+                        modifier = Modifier.background(AppTheme.colors.backElevated),
                         expanded = expanded,
-                        onDismissRequest = { expanded = false }
+                        onDismissRequest = { expanded = false },
                     ) {
                         Importance.entries.forEach { importanceOption ->
                             DropdownMenuItem(
                                 text = {
-                                    importanceDictionary[importanceOption]?.let { Text(it.text) }
+                                    Text(importanceDictionary[importanceOption]!!.text)
                                 },
                                 colors = MenuDefaults.itemColors(
-                                    textColor = AppTheme.colors.labelPrimary,
+                                    textColor = importanceDictionary[importanceOption]!!.color,
                                 ),
                                 onClick = {
                                     importance = importanceOption
+                                    expanded = false
                                 },
                             )
-                            HorizontalDivider()
                         }
                     }
                 }

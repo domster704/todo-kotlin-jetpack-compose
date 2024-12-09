@@ -30,7 +30,7 @@ object TodoItemsRepository {
             set(2024, Calendar.MARCH, 6)
         }.time))
 
-        viewModel.saveItem(TodoItem(id = "4", text = "Prepare presentation", importance = Importance.LOW, createdAt = Calendar.getInstance().apply {
+        viewModel.saveItem(TodoItem(id = "4", text = "Prepare presentation", importance = Importance.HIGH, createdAt = Calendar.getInstance().apply {
             set(2024, Calendar.APRIL, 20)
         }.time, modifiedAt = Calendar.getInstance().apply {
             set(2024, Calendar.APRIL, 21)
