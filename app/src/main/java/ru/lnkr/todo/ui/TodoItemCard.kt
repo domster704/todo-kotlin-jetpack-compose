@@ -1,7 +1,9 @@
 package ru.lnkr.todo.ui
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,6 +36,7 @@ import ru.lnkr.todo.model.Importance
 import ru.lnkr.todo.model.TodoItem
 import ru.lnkr.todo.repository.TodoItemsRepository
 import ru.lnkr.todo.ui.theme.AppTheme
+import ru.lnkr.todo.util.Util
 
 @Composable
 fun TodoItemCard(item: TodoItem, onClick: () -> Unit) {
@@ -109,18 +112,30 @@ fun TodoItemCard(item: TodoItem, onClick: () -> Unit) {
                 }
             }
 
-            Text(
-                text = item.text,
-                style = MaterialTheme.typography.bodyLarge,
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis,
+            Column(
                 modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .wrapContentHeight(),
-                color = if (item.isCompleted) AppTheme.colors.labelTertiary else AppTheme.colors.labelPrimary,
-                textDecoration = if (item.isCompleted) TextDecoration.LineThrough else null
-            )
+                    .fillMaxWidth()
+                    .weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = item.text,
+                    style = MaterialTheme.typography.bodyLarge,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier,
+                    color = if (item.isCompleted) AppTheme.colors.labelTertiary else AppTheme.colors.labelPrimary,
+                    textDecoration = if (item.isCompleted) TextDecoration.LineThrough else null
+                )
+
+                if (item.deadline != null) {
+                    Text(
+                        text = Util.convertDateToString(item.deadline),
+                        style = AppTheme.typography.subhead,
+                        color = AppTheme.colors.labelTertiary,
+                    )
+                }
+            }
 
             IconButton(
                 onClick = { },
@@ -141,6 +156,6 @@ fun TodoItemCard(item: TodoItem, onClick: () -> Unit) {
 @Composable
 fun TodoItemCardPreview() {
     AppTheme {
-        TodoItemCard(TodoItemsRepository.getTodoItems()[0]) {}
+        TodoItemCard(TodoItemsRepository.getTodoItems()[2]) {}
     }
 }

@@ -3,7 +3,6 @@ package ru.lnkr.todo.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
@@ -54,6 +55,7 @@ import ru.lnkr.todo.model.Importance
 import ru.lnkr.todo.model.TodoItem
 import ru.lnkr.todo.repository.TodoItemsRepository
 import ru.lnkr.todo.ui.theme.AppTheme
+import ru.lnkr.todo.util.Util
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -75,7 +77,9 @@ fun TodoEditScreen(
 ) {
     var itemText by remember { mutableStateOf(item?.text.orEmpty()) }
     var importance by remember { mutableStateOf(item?.importance ?: Importance.NONE) }
-    var deadline by remember { mutableStateOf(Date()) }
+
+    var deadline by remember { mutableStateOf(item?.deadline ?: Date()) }
+    var isDeadline by remember { mutableStateOf(item?.deadline != null) }
 
     var expanded by remember { mutableStateOf(false) }
 
@@ -102,13 +106,19 @@ fun TodoEditScreen(
                                     when (item) {
                                         null -> TodoItem(
                                             text = itemText,
-                                            importance = importance
+                                            importance = importance,
+                                            deadline = if (isDeadline) deadline else null,
+                                            modifiedAt = Date(),
                                         )
 
                                         else -> TodoItem(
                                             id = item.id,
                                             text = itemText,
-                                            importance = importance
+                                            importance = importance,
+                                            deadline = if (isDeadline) deadline else null,
+                                            createdAt = item.createdAt,
+                                            modifiedAt = Date(),
+                                            isCompleted = item.isCompleted
                                         )
                                     }
                                 )
@@ -125,91 +135,98 @@ fun TodoEditScreen(
         },
         containerColor = AppTheme.colors.backPrimary,
     ) { contentPadding ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(contentPadding)
                 .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
         ) {
-            Column {
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = AppTheme.colors.backPrimary,
-                    ),
-                    elevation = CardDefaults.cardElevation(4.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    TextField(
-                        value = itemText,
-                        onValueChange = { itemText = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        textStyle = AppTheme.typography.body,
-                        minLines = 5,
-                        placeholder = {
-                            Text(
-                                "Что надо сделать...",
-                                style = AppTheme.typography.body,
-                                color = AppTheme.colors.labelTertiary
-                            )
-                        },
-                        colors = TextFieldDefaults.colors(
-                            focusedTextColor = AppTheme.colors.labelPrimary,
-                            unfocusedTextColor = AppTheme.colors.labelPrimary,
-
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = AppTheme.colors.backSecondary,
+                ),
+                elevation = CardDefaults.cardElevation(4.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                TextField(
+                    value = itemText,
+                    onValueChange = { itemText = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    textStyle = AppTheme.typography.body,
+                    minLines = 5,
+                    placeholder = {
+                        Text(
+                            "Что надо сделать...",
+                            style = AppTheme.typography.body,
+                            color = AppTheme.colors.labelTertiary
                         )
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                ImportanceChooser(
-                    importance,
-                    expanded,
-                    { newImportance ->
-                        importance = newImportance
                     },
-                    { newExpanded ->
-                        expanded = newExpanded
-                    })
-                Spacer(modifier = Modifier.height(8.dp))
-                HorizontalDivider()
-                Spacer(modifier = Modifier.height(8.dp))
+                    colors = TextFieldDefaults.colors(
+                        focusedTextColor = AppTheme.colors.labelPrimary,
+                        unfocusedTextColor = AppTheme.colors.labelPrimary,
 
-                DeadlineChooser(deadline) { newDeadline ->
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                    )
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            ImportanceChooser(
+                importance,
+                expanded,
+                { newImportance ->
+                    importance = newImportance
+                },
+                { newExpanded ->
+                    expanded = newExpanded
+                })
+            Spacer(modifier = Modifier.height(8.dp))
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(8.dp))
+
+            DeadlineChooser(
+                isDeadline,
+                deadline,
+                { newDeadline ->
                     deadline = newDeadline
+                },
+                { newIsDeadline ->
+                    isDeadline = newIsDeadline
                 }
+            )
 
-                Spacer(modifier = Modifier.height(24.dp))
-                HorizontalDivider()
-                Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(24.dp))
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(8.dp))
 
-                TextButton(
-                    onClick = {
-                        item?.let { onDelete(it.id) }
-                    },
-                    contentPadding = PaddingValues(0.dp),
-                    enabled = item != null,
-                    colors = ButtonDefaults.buttonColors(
-                        contentColor = AppTheme.colors.colorRed,
-                        containerColor = Color.Transparent,
-                        disabledContainerColor = Color.Transparent,
-                    )
-                ) {
-                    Icon(
-                        Icons.Filled.Delete,
-                        contentDescription = "Delete",
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        "Удалить",
-                        style = AppTheme.typography.body,
-                    )
-                }
+            TextButton(
+                onClick = {
+                    item?.let { onDelete(it.id) }
+                    onClose()
+                },
+                contentPadding = PaddingValues(0.dp),
+                enabled = item != null,
+                colors = ButtonDefaults.buttonColors(
+                    contentColor = AppTheme.colors.colorRed,
+                    containerColor = Color.Transparent,
+                    disabledContainerColor = Color.Transparent,
+                )
+            ) {
+                Icon(
+                    Icons.Filled.Delete,
+                    contentDescription = "Delete",
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    "Удалить",
+                    style = AppTheme.typography.body,
+                )
             }
         }
     }
@@ -284,11 +301,11 @@ fun ImportanceChooser(
 
 @Composable
 fun DeadlineChooser(
+    isDeadline: Boolean,
     deadline: Date,
     deadlineOnChange: (Date) -> Unit,
+    isDeadlineChanged: (Boolean) -> Unit,
 ) {
-    var isDeadline by remember { mutableStateOf(false) }
-
     var isShownDatePicker by remember { mutableStateOf(false) }
 
     Row(
@@ -306,7 +323,7 @@ fun DeadlineChooser(
             )
             if (isDeadline) {
                 Text(
-                    convertDateToString(deadline),
+                    Util.convertDateToString(deadline),
                     color = AppTheme.colors.colorBlue,
                     style = AppTheme.typography.button,
                     modifier = Modifier.clickable {
@@ -318,7 +335,7 @@ fun DeadlineChooser(
 
         Switch(
             checked = isDeadline,
-            onCheckedChange = { isDeadline = !isDeadline },
+            onCheckedChange = { isDeadlineChanged(!isDeadline) },
             colors = SwitchDefaults.colors(
                 checkedBorderColor = Color.Transparent,
                 checkedThumbColor = AppTheme.colors.colorBlue,
@@ -401,15 +418,10 @@ fun DatePickerModal(
     }
 }
 
-fun convertDateToString(date: Date): String {
-    val formatter = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-    return formatter.format(date)
-}
-
 @Preview(showBackground = true)
 @Composable
 fun TodoEditScreenPreview() {
     AppTheme {
-        TodoEditScreen(TodoItemsRepository.getTodoItems()[0], {}, {})
+        TodoEditScreen(TodoItemsRepository.getTodoItems()[3], {}, {})
     }
 }
