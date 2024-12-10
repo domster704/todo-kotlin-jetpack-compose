@@ -53,7 +53,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.lnkr.todo.model.Importance
 import ru.lnkr.todo.model.TodoItem
-import ru.lnkr.todo.repository.TodoItemsRepository
+import ru.lnkr.todo.repository.TodoViewModel
 import ru.lnkr.todo.ui.theme.AppTheme
 import ru.lnkr.todo.util.Util
 import java.util.Date
@@ -423,7 +423,8 @@ fun DatePickerModal(
 @Preview(showBackground = true)
 @Composable
 fun TodoEditScreenPreview() {
+    val fakeViewModel = TodoViewModel()
     AppTheme {
-        TodoEditScreen(TodoItemsRepository.getTodoItems()[3], {}, {})
+        TodoEditScreen(fakeViewModel.items[3], {}, {})
     }
 }

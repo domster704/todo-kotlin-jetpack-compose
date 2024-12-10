@@ -70,5 +70,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(libs.accompanist.themeadapter.material3)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
 }

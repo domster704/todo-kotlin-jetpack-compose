@@ -14,19 +14,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxColors
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,15 +34,14 @@ import androidx.compose.ui.unit.dp
 import ru.lnkr.todo.R
 import ru.lnkr.todo.model.Importance
 import ru.lnkr.todo.model.TodoItem
-import ru.lnkr.todo.repository.TodoItemsRepository
+import ru.lnkr.todo.repository.TodoViewModel
 import ru.lnkr.todo.ui.theme.AppTheme
 import ru.lnkr.todo.util.Util
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodoItemCard(item: TodoItem, onClick: () -> Unit) {
     Box(modifier = Modifier
-        .clip(RoundedCornerShape(4.dp))
+//        .clip(RoundedCornerShape(4.dp))
         .background(AppTheme.colors.backSecondary)
         .clickable { onClick() }
     ) {
@@ -162,7 +158,8 @@ fun TodoItemCard(item: TodoItem, onClick: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun TodoItemCardPreview() {
+    val fakeViewModel = TodoViewModel()
     AppTheme {
-        TodoItemCard(TodoItemsRepository.getTodoItems()[2]) {}
+        TodoItemCard(fakeViewModel.items[2]) {}
     }
 }

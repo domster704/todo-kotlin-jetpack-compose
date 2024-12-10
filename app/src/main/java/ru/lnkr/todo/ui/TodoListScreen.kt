@@ -1,5 +1,6 @@
 package ru.lnkr.todo.ui
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -25,10 +27,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
@@ -36,8 +34,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.lnkr.todo.R
+import ru.lnkr.todo.VMCompositionLocal
 import ru.lnkr.todo.model.TodoItem
-import ru.lnkr.todo.repository.TodoItemsRepository
 import ru.lnkr.todo.ui.swipe.SwipeToDoItem
 import ru.lnkr.todo.ui.theme.AppTheme
 
@@ -47,10 +45,15 @@ fun TodoListScreen(
     onAddClick: () -> Unit = {},
     onItemClick: (TodoItem) -> Unit = {},
 ) {
-    var completedItemsVisibility by remember { mutableStateOf(false) }
-    var itemsList by remember { mutableStateOf(TodoItemsRepository.getTodoItems()) }
+    val vm = VMCompositionLocal.current
+    val itemsList = when (vm.isVisible.value) {
+        false -> vm.items.filter { !it.isCompleted }
+        true -> vm.items
+    }
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+
+    Log.d("xd", itemsList.toString())
 
     Scaffold(
         modifier = Modifier
@@ -73,13 +76,11 @@ fun TodoListScreen(
                 },
                 actions = {
                     IconButton({
-                        completedItemsVisibility = !completedItemsVisibility
-                        TodoItemsRepository.setVisibilityOfCompletedItems(completedItemsVisibility)
-                        itemsList = TodoItemsRepository.getTodoItems()
+                        vm.setVisibilityOfCompletedItems(!vm.isVisible.value)
                     }) {
                         Icon(
                             painterResource(
-                                if (completedItemsVisibility)
+                                if (vm.isVisible.value)
                                     R.drawable.visibility_icon
                                 else
                                     R.drawable.visibility_off_icon
@@ -124,12 +125,14 @@ fun TodoListScreen(
                         horizontal = 16.dp
                     ),
             ) {
-                items(itemsList) { item ->
+                itemsIndexed(
+                    items = itemsList,
+                    key = {_, item -> item.hashCode()}
+                ) { _, item ->
                     SwipeToDoItem(
                         item,
                         onItemClick,
                         onSwipeFinished = {
-                            itemsList = TodoItemsRepository.getTodoItems()
                         }
                     )
                 }
