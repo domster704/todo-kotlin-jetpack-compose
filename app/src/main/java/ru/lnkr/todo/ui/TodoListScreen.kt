@@ -53,8 +53,6 @@ fun TodoListScreen(
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
-    Log.d("xd", itemsList.toString())
-
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
