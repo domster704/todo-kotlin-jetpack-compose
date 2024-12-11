@@ -7,6 +7,9 @@ import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -14,6 +17,13 @@ import androidx.compose.ui.unit.dp
 import ru.lnkr.todo.VMCompositionLocal
 import ru.lnkr.todo.model.TodoItem
 import ru.lnkr.todo.ui.TodoItemCard
+import java.util.UUID
+
+enum class TodoItemSwipeState {
+    None,
+    Completed,
+    Deleted,
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -22,28 +32,44 @@ fun SwipeToDoItem(
     onItemClick: (TodoItem) -> Unit,
     onSwipeFinished: () -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
+    val itemState = remember { mutableStateOf(TodoItemSwipeState.None) }
     val viewModel = VMCompositionLocal.current
 
     val dismissState = rememberSwipeToDismissBoxState(
         confirmValueChange = {
             when (it) {
                 SwipeToDismissBoxValue.StartToEnd -> {
-                    viewModel.completeItem(item.id)
-                    onSwipeFinished()
+                    itemState.value = TodoItemSwipeState.Completed
                 }
 
                 SwipeToDismissBoxValue.EndToStart -> {
-                    viewModel.deleteItem(item.id)
-                    onSwipeFinished()
+                    itemState.value = TodoItemSwipeState.Deleted
                 }
 
-                SwipeToDismissBoxValue.Settled -> return@rememberSwipeToDismissBoxState false
+                SwipeToDismissBoxValue.Settled -> {
+                    itemState.value = TodoItemSwipeState.None
+                    return@rememberSwipeToDismissBoxState false
+                }
             }
             return@rememberSwipeToDismissBoxState true
         },
-        positionalThreshold = { it * .25f }
+        positionalThreshold = { it * .51f }
     )
+
+    LaunchedEffect(itemState.value) {
+        when (itemState.value) {
+            TodoItemSwipeState.Completed -> {
+                viewModel.completeItem(item.id)
+                onSwipeFinished()
+            }
+            TodoItemSwipeState.Deleted -> {
+                viewModel.deleteItem(item.id)
+                onSwipeFinished()
+            }
+            else -> {
+            }
+        }
+    }
 
     SwipeToDismissBox(
         state = dismissState,

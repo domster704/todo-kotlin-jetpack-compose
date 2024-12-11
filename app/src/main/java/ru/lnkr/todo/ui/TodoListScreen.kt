@@ -1,6 +1,5 @@
 package ru.lnkr.todo.ui
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,8 +7,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -27,12 +26,14 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import ru.lnkr.todo.R
 import ru.lnkr.todo.VMCompositionLocal
 import ru.lnkr.todo.model.TodoItem
@@ -46,12 +47,15 @@ fun TodoListScreen(
     onItemClick: (TodoItem) -> Unit = {},
 ) {
     val vm = VMCompositionLocal.current
+    val scrollBehavior =
+        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val itemsListState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+
     val itemsList = when (vm.isVisible.value) {
         false -> vm.items.filter { !it.isCompleted }
         true -> vm.items
     }
-    val scrollBehavior =
-        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
     Scaffold(
         modifier = Modifier
@@ -75,6 +79,9 @@ fun TodoListScreen(
                 actions = {
                     IconButton({
                         vm.setVisibilityOfCompletedItems(!vm.isVisible.value)
+                        coroutineScope.launch {
+                            itemsListState.animateScrollToItem(0)
+                        }
                     }) {
                         Icon(
                             painterResource(
@@ -115,7 +122,9 @@ fun TodoListScreen(
             shape = RoundedCornerShape(6.dp),
             elevation = CardDefaults.cardElevation(4.dp)
         ) {
+
             LazyColumn(
+                state = itemsListState,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(

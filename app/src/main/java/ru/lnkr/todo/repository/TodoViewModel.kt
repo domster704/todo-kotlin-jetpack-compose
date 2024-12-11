@@ -243,13 +243,6 @@ open class TodoViewModel : ViewModel() {
         )
     }
 
-//    val items: List<TodoItem>
-//        get() =
-//            when (isVisible.value) {
-//                false -> items.filter { !it.isCompleted }
-//                true -> items
-//            }
-
     fun saveItem(item: TodoItem) {
         val index = items.indexOfFirst { it.id == item.id }
         if (index >= 0) {
@@ -264,8 +257,9 @@ open class TodoViewModel : ViewModel() {
     }
 
     fun completeItem(itemId: String) {
-        items.replaceAll {
-            if (it.id == itemId) it.copy(isCompleted = true) else it
+        val index = items.indexOfFirst { it.id == itemId }
+        if (index >= 0) {
+            items[index] = items[index].copy(isCompleted = true)
         }
     }
 
