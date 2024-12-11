@@ -1,5 +1,6 @@
 package ru.lnkr.todo.ui
 
+import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +27,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -33,10 +35,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import ru.lnkr.todo.R
 import ru.lnkr.todo.VMCompositionLocal
 import ru.lnkr.todo.model.TodoItem
+import ru.lnkr.todo.repository.TodoViewModel
 import ru.lnkr.todo.ui.swipe.SwipeToDoItem
 import ru.lnkr.todo.ui.theme.AppTheme
 
@@ -134,7 +138,7 @@ fun TodoListScreen(
             ) {
                 itemsIndexed(
                     items = itemsList,
-                    key = {_, item -> item.hashCode()}
+                    key = { _, item -> item.hashCode() }
                 ) { _, item ->
                     SwipeToDoItem(
                         item,
@@ -164,9 +168,16 @@ fun TodoListScreen(
 }
 
 @Preview(showBackground = true)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
 @Composable
 fun TodoListScreenPreview() {
-    AppTheme {
-        TodoListScreen()
+    val fakeViewModel = viewModel<TodoViewModel>()
+    CompositionLocalProvider(VMCompositionLocal provides fakeViewModel) {
+        AppTheme {
+            TodoListScreen()
+        }
     }
 }

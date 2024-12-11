@@ -1,5 +1,6 @@
 package ru.lnkr.todo.ui
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,13 +42,12 @@ import ru.lnkr.todo.util.Util
 @Composable
 fun TodoItemCard(item: TodoItem, onClick: () -> Unit) {
     Box(modifier = Modifier
-//        .clip(RoundedCornerShape(4.dp))
         .background(AppTheme.colors.backSecondary)
         .clickable { onClick() }
     ) {
         Row(
             modifier = Modifier
-                .padding(vertical = 12.dp)
+                .padding(vertical = 12.dp, horizontal = 8.dp)
                 .height(IntrinsicSize.Min)
                 .fillMaxWidth()
         ) {
@@ -140,6 +140,7 @@ fun TodoItemCard(item: TodoItem, onClick: () -> Unit) {
                 }
             }
 
+            Spacer(modifier = Modifier.width(2.dp))
             IconButton(
                 onClick = { },
                 modifier = Modifier
@@ -156,6 +157,10 @@ fun TodoItemCard(item: TodoItem, onClick: () -> Unit) {
 }
 
 @Preview(showBackground = true)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
 @Composable
 fun TodoItemCardPreview() {
     val fakeViewModel = TodoViewModel()

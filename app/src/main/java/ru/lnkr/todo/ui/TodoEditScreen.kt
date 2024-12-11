@@ -1,5 +1,6 @@
 package ru.lnkr.todo.ui
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,6 +42,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,6 +53,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import ru.lnkr.todo.MainActivityComponent
+import ru.lnkr.todo.VMCompositionLocal
 import ru.lnkr.todo.model.Importance
 import ru.lnkr.todo.model.TodoItem
 import ru.lnkr.todo.repository.TodoViewModel
@@ -421,6 +426,10 @@ fun DatePickerModal(
 }
 
 @Preview(showBackground = true)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
 @Composable
 fun TodoEditScreenPreview() {
     val fakeViewModel = TodoViewModel()
