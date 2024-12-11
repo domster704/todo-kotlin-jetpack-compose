@@ -1,12 +1,23 @@
 package ru.lnkr.todo.ui.theme
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 
 @Immutable
 data class CustomColors(
@@ -17,10 +28,8 @@ data class CustomColors(
     val labelTertiary: Color,
     val labelDisable: Color,
     val colorRed: Color,
-    val colorRedTransparent: Color,
     val colorGreen: Color,
     val colorBlue: Color,
-    val colorBlueTransparent: Color,
     val colorGray: Color,
     val colorGrayLight: Color,
     val colorWhite: Color,
@@ -53,10 +62,8 @@ val LocalCustomColors = staticCompositionLocalOf {
         labelTertiary = Color.Unspecified,
         labelDisable = Color.Unspecified,
         colorRed = Color.Unspecified,
-        colorRedTransparent = Color.Unspecified,
         colorGreen = Color.Unspecified,
         colorBlue = Color.Unspecified,
-        colorBlueTransparent = Color.Unspecified,
         colorGray = Color.Unspecified,
         colorGrayLight = Color.Unspecified,
         colorWhite = Color.Unspecified,
@@ -89,10 +96,8 @@ val lightColors = CustomColors(
     labelTertiary = LabelTertiaryLight,
     labelDisable = LabelDisableLight,
     colorRed = ColorRedLight,
-    colorRedTransparent = ColorRedTransparent,
     colorGreen = ColorGreenLight,
     colorBlue = ColorBlueLight,
-    colorBlueTransparent = ColorBlueTransparent,
     colorGray = ColorGrayLight,
     colorGrayLight = ColorGrayLightLight,
     colorWhite = ColorWhiteLight,
@@ -109,10 +114,8 @@ val darkColors = CustomColors(
     labelTertiary = LabelTertiaryDark,
     labelDisable = LabelDisableDark,
     colorRed = ColorRedDark,
-    colorRedTransparent = ColorRedTransparent,
     colorGreen = ColorGreenDark,
     colorBlue = ColorBlueDark,
-    colorBlueTransparent = ColorBlueTransparent,
     colorGray = ColorGrayDark,
     colorGrayLight = ColorGrayLightDark,
     colorWhite = ColorWhiteDark,
@@ -124,7 +127,6 @@ val darkColors = CustomColors(
 @Composable
 fun AppTheme(
     isDarkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val colors = if (isDarkTheme) darkColors else lightColors
@@ -147,10 +149,6 @@ fun AppTheme(
         LocalCustomColors provides colors,
         LocalCustomTypography provides customTypography,
     ) {
-//        MaterialTheme(
-//            typography = Typography,
-//            content = content
-//        )
         content()
     }
 }
@@ -164,4 +162,98 @@ object AppTheme {
     val typography: CustomTypography
         @Composable
         get() = LocalCustomTypography.current
+}
+
+@Preview(
+    widthDp = 1800,
+    heightDp = 1100,
+)
+@Composable
+fun AppThemePreview() {
+    Row(horizontalArrangement = Arrangement.spacedBy(64.dp)) {
+        AppTheme(isDarkTheme = false) {
+            Column(
+                modifier = Modifier
+                    .background(AppTheme.colors.backSecondary)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Text(
+                    "Large title - 32/38",
+                    style = AppTheme.typography.largeTitle,
+                    color = AppTheme.colors.labelPrimary,
+                )
+
+                Text(
+                    "Title - 20/32",
+                    style = AppTheme.typography.title,
+                    color = AppTheme.colors.labelPrimary,
+                )
+
+                Text(
+                    "Button - 14/24",
+                    style = AppTheme.typography.button,
+                    color = AppTheme.colors.labelPrimary,
+                )
+
+                Text(
+                    "Body - 16/20",
+                    style = AppTheme.typography.body,
+                    color = AppTheme.colors.labelPrimary,
+                )
+
+                Text(
+                    "Subhead - 14/20",
+                    style = AppTheme.typography.subhead,
+                    color = AppTheme.colors.labelPrimary,
+                )
+            }
+        }
+        Column(verticalArrangement = Arrangement.spacedBy(100.dp)) {
+            AppTheme(isDarkTheme = false) {
+                Palette("Палитра - светлая ема")
+            }
+
+            AppTheme(isDarkTheme = true) {
+                Palette("Палитра - темная тема")
+            }
+        }
+    }
+}
+
+@Composable
+fun Palette(text: String) {
+    val boxModifier = Modifier
+        .size(240.dp, 100.dp)
+    Column(
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text(
+            text,
+            style = AppTheme.typography.buttonBold
+        )
+        Row {
+            Box(modifier = boxModifier.background(AppTheme.colors.supportSeparator))
+            Box(modifier = boxModifier.background(AppTheme.colors.supportOverlay))
+        }
+        Row {
+            Box(modifier = boxModifier.background(AppTheme.colors.labelPrimary))
+            Box(modifier = boxModifier.background(AppTheme.colors.labelSecondary))
+            Box(modifier = boxModifier.background(AppTheme.colors.labelTertiary))
+            Box(modifier = boxModifier.background(AppTheme.colors.labelDisable))
+        }
+        Row {
+            Box(modifier = boxModifier.background(AppTheme.colors.colorRed))
+            Box(modifier = boxModifier.background(AppTheme.colors.colorGreen))
+            Box(modifier = boxModifier.background(AppTheme.colors.colorBlue))
+            Box(modifier = boxModifier.background(AppTheme.colors.colorGray))
+            Box(modifier = boxModifier.background(AppTheme.colors.colorGrayLight))
+            Box(modifier = boxModifier.background(AppTheme.colors.colorWhite))
+        }
+        Row {
+            Box(modifier = boxModifier.background(AppTheme.colors.backPrimary))
+            Box(modifier = boxModifier.background(AppTheme.colors.backSecondary))
+            Box(modifier = boxModifier.background(AppTheme.colors.backElevated))
+        }
+    }
 }

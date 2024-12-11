@@ -43,6 +43,3 @@ val BackPrimaryDark = Color(0xFF161618)
 val BackSecondaryDark = Color(0xFF252528)
 val BackElevatedDark = Color(0xFF3C3C3F)
 
-
-val ColorRedTransparent = Color(0x29FF3B30)
-val ColorBlueTransparent = Color(0x4D007AFF)

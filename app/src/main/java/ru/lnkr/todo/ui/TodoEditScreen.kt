@@ -344,7 +344,7 @@ fun DeadlineChooser(
             colors = SwitchDefaults.colors(
                 checkedBorderColor = Color.Transparent,
                 checkedThumbColor = AppTheme.colors.colorBlue,
-                checkedTrackColor = AppTheme.colors.colorBlueTransparent,
+                checkedTrackColor = AppTheme.colors.colorBlue.copy(alpha = 0.3f),
 
                 uncheckedThumbColor = AppTheme.colors.backElevated,
                 uncheckedBorderColor = Color.Transparent,

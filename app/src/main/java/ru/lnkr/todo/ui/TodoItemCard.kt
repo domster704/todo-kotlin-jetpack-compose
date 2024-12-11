@@ -66,7 +66,7 @@ fun TodoItemCard(item: TodoItem, onClick: () -> Unit) {
                     checkedBoxColor = AppTheme.colors.colorGreen,
                     checkedBorderColor = AppTheme.colors.colorGreen,
 
-                    uncheckedBoxColor = AppTheme.colors.colorRedTransparent,
+                    uncheckedBoxColor = AppTheme.colors.colorRed.copy(alpha = 0.16f),
                     uncheckedBorderColor = AppTheme.colors.colorRed,
 
                     disabledCheckedBoxColor = AppTheme.colors.colorGreen,
