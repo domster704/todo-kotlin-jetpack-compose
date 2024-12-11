@@ -70,7 +70,7 @@ fun TodoItemCard(item: TodoItem, onClick: () -> Unit) {
                     uncheckedBorderColor = AppTheme.colors.colorRed,
 
                     disabledCheckedBoxColor = AppTheme.colors.colorGreen,
-                    disabledBorderColor = AppTheme.colors.supportSeparator,
+                    disabledBorderColor = AppTheme.colors.colorGreen,
 
                     disabledUncheckedBoxColor = Color.Transparent,
                     disabledUncheckedBorderColor = AppTheme.colors.supportSeparator,
@@ -142,7 +142,7 @@ fun TodoItemCard(item: TodoItem, onClick: () -> Unit) {
 
             Spacer(modifier = Modifier.width(2.dp))
             IconButton(
-                onClick = { },
+                onClick = { onClick() },
                 modifier = Modifier
                     .size(24.dp)
             ) {

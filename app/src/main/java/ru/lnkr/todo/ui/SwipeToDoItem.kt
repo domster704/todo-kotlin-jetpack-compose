@@ -21,7 +21,7 @@ import ru.lnkr.todo.VMCompositionLocal
 import ru.lnkr.todo.model.TodoItem
 import ru.lnkr.todo.ui.swipe.DismissBackground
 
-const val TIMEOUT = 100L
+const val TIMEOUT = 200L
 
 enum class TodoItemSwipeState {
     None,
@@ -43,6 +43,9 @@ fun SwipeToDoItem(
         confirmValueChange = {
             when (it) {
                 SwipeToDismissBoxValue.StartToEnd -> {
+                    if (item.isCompleted) {
+                        return@rememberSwipeToDismissBoxState false
+                    }
                     itemState.value = TodoItemSwipeState.Completed
                 }
 
@@ -86,22 +89,6 @@ fun SwipeToDoItem(
             .clip(RoundedCornerShape(12.dp)),
         backgroundContent = { DismissBackground(dismissState) },
     ) {
-        AnimatedVisibility(
-            visible = itemState.value == TodoItemSwipeState.None,
-            enter = EnterTransition.None,
-            exit = slideOutHorizontally(
-                targetOffsetX = {
-                    when (itemState.value) {
-                        // Движение вправо
-                        TodoItemSwipeState.Completed -> it / 2
-                        // Движение влево
-                        TodoItemSwipeState.Deleted -> (-it) / 2
-                        else -> it / 2
-                    }
-                },
-            )
-        ) {
-            TodoItemCard(item = item) { onItemClick(item) }
-        }
+        TodoItemCard(item = item) { onItemClick(item) }
     }
 }

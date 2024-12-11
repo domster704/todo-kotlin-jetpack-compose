@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import ru.lnkr.todo.model.Importance
 import ru.lnkr.todo.model.TodoItem
 import java.util.Calendar
+import java.util.Date
 
 open class TodoViewModel : ViewModel() {
     var items = mutableStateListOf<TodoItem>()
@@ -39,6 +40,9 @@ open class TodoViewModel : ViewModel() {
                 isCompleted = true,
                 modifiedAt = Calendar.getInstance().apply {
                     set(2024, Calendar.FEBRUARY, 15)
+                }.time,
+                deadline = Calendar.getInstance().apply {
+                    set(2024, Calendar.FEBRUARY, 15)
                 }.time
             )
         )
@@ -53,6 +57,9 @@ open class TodoViewModel : ViewModel() {
                 }.time,
                 modifiedAt = Calendar.getInstance().apply {
                     set(2024, Calendar.MARCH, 6)
+                }.time,
+                deadline = Calendar.getInstance().apply {
+                    set(2025, Calendar.JANUARY, 1)
                 }.time
             )
         )
@@ -259,7 +266,10 @@ open class TodoViewModel : ViewModel() {
     fun completeItem(itemId: String) {
         val index = items.indexOfFirst { it.id == itemId }
         if (index >= 0) {
-            items[index] = items[index].copy(isCompleted = true)
+            items[index] = items[index].copy(
+                isCompleted = true,
+                modifiedAt = Date()
+            )
         }
     }
 
