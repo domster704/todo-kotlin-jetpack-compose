@@ -41,7 +41,6 @@ import ru.lnkr.todo.R
 import ru.lnkr.todo.VMCompositionLocal
 import ru.lnkr.todo.model.TodoItem
 import ru.lnkr.todo.repository.TodoViewModel
-import ru.lnkr.todo.ui.swipe.SwipeToDoItem
 import ru.lnkr.todo.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
