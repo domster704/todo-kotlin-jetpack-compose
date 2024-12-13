@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -19,6 +20,7 @@ import ru.lnkr.todo.ui.TodoListScreen
 @Composable
 fun MainNavGraph(navController: NavHostController) {
     val vm = VMCompositionLocal.current
+    val items = vm.items.collectAsState()
 
     NavHost(
         navController = navController,
@@ -58,7 +60,7 @@ fun MainNavGraph(navController: NavHostController) {
         }
         composable("todo_edit/{taskId}") { backStackEntry ->
             val taskId = backStackEntry.arguments?.getString("taskId")
-            val item = vm.items.find { it.id == taskId }
+            val item = items.value.find { it.id == taskId }
             TodoEditScreen(
                 item = item,
                 onSave = { updatedItem ->

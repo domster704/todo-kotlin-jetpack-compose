@@ -42,6 +42,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -429,7 +430,8 @@ fun DatePickerModal(
 @Composable
 fun TodoEditScreenPreview() {
     val fakeViewModel = TodoViewModel()
+    val items = fakeViewModel.items.collectAsState()
     AppTheme {
-        TodoEditScreen(fakeViewModel.items[3], {}, {})
+        TodoEditScreen(items.value[3], {}, {})
     }
 }

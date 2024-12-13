@@ -28,14 +28,23 @@ import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.currentRecomposeScope
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.flow.observeOn
 import kotlinx.coroutines.launch
 import ru.lnkr.todo.R
 import ru.lnkr.todo.VMCompositionLocal
@@ -50,14 +59,17 @@ fun TodoListScreen(
     onItemClick: (TodoItem) -> Unit = {},
 ) {
     val vm = VMCompositionLocal.current
+    val items by vm.items.collectAsStateWithLifecycle()
+    val isVisibleCompletedItems by vm.isVisibleCompletedItems.collectAsStateWithLifecycle()
+
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val itemsListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
-    val itemsList = when (vm.isVisible.value) {
-        false -> vm.items.filter { !it.isCompleted }
-        true -> vm.items
+    val itemsList = when (isVisibleCompletedItems) {
+        false -> items.filter { !it.isCompleted }
+        true -> items
     }
 
     Scaffold(
@@ -81,14 +93,14 @@ fun TodoListScreen(
                 },
                 actions = {
                     IconButton({
-                        vm.setVisibilityOfCompletedItems(!vm.isVisible.value)
+                        vm.setVisibilityOfCompletedItems(!isVisibleCompletedItems)
                         coroutineScope.launch {
                             itemsListState.animateScrollToItem(0)
                         }
                     }) {
                         Icon(
                             painterResource(
-                                if (vm.isVisible.value)
+                                if (isVisibleCompletedItems)
                                     R.drawable.visibility_icon
                                 else
                                     R.drawable.visibility_off_icon

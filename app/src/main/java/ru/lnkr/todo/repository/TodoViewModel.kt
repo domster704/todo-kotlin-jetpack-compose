@@ -1,18 +1,22 @@
 package ru.lnkr.todo.repository
 
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import ru.lnkr.todo.model.Importance
 import ru.lnkr.todo.model.TodoItem
 import java.util.Calendar
 import java.util.Date
 
 open class TodoViewModel : ViewModel() {
-    var items = mutableStateListOf<TodoItem>()
-        private set
-    var isVisible = mutableStateOf(false)
-        private set
+    private var _items = MutableStateFlow<List<TodoItem>>(mutableListOf())
+    val items: StateFlow<List<TodoItem>>
+        get() = _items.asStateFlow()
+
+    private var _isVisibleCompletedItems = MutableStateFlow(false)
+    val isVisibleCompletedItems: StateFlow<Boolean>
+        get() = _isVisibleCompletedItems
 
     init {
         saveItem(
@@ -251,29 +255,33 @@ open class TodoViewModel : ViewModel() {
     }
 
     fun saveItem(item: TodoItem) {
-        val index = items.indexOfFirst { it.id == item.id }
-        if (index >= 0) {
-            items[index] = item
-        } else {
-            items.add(item)
-        }
+        _items.value = _items.value.map {
+            if (it.id == item.id) {
+                item
+            } else {
+                it
+            }
+        } + if (_items.value.none { it.id == item.id }) listOf(item) else emptyList()
     }
 
     fun deleteItem(itemId: String) {
-        items.removeAll { it.id == itemId }
+        _items.value = _items.value.filterNot { it.id == itemId }
     }
 
     fun completeItem(itemId: String) {
-        val index = items.indexOfFirst { it.id == itemId }
-        if (index >= 0) {
-            items[index] = items[index].copy(
-                isCompleted = true,
-                modifiedAt = Date()
-            )
+        _items.value = _items.value.map {
+            if (it.id == itemId) {
+                it.copy(
+                    isCompleted = true,
+                    modifiedAt = Date()
+                )
+            } else {
+                it
+            }
         }
     }
 
     fun setVisibilityOfCompletedItems(isVisible: Boolean) {
-        this.isVisible.value = isVisible
+        this._isVisibleCompletedItems.value = isVisible
     }
 }

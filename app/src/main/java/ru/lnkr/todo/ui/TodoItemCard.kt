@@ -24,6 +24,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -164,7 +165,8 @@ fun TodoItemCard(item: TodoItem, onClick: () -> Unit) {
 @Composable
 fun TodoItemCardPreview() {
     val fakeViewModel = TodoViewModel()
+    val items = fakeViewModel.items.collectAsState()
     AppTheme {
-        TodoItemCard(fakeViewModel.items[2]) {}
+        TodoItemCard(items.value[2]) {}
     }
 }

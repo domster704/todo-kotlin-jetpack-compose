@@ -8,8 +8,10 @@ import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
@@ -17,7 +19,8 @@ import ru.lnkr.todo.VMCompositionLocal
 import ru.lnkr.todo.model.TodoItem
 import ru.lnkr.todo.ui.swipe.DismissBackground
 
-const val TIMEOUT = 200L
+// 100ms for 50% progress of swiping
+const val TIMEOUT = 100L
 
 enum class TodoItemSwipeState {
     None,
@@ -32,7 +35,7 @@ fun SwipeToDoItem(
     onItemClick: (TodoItem) -> Unit,
     onSwipeFinished: (item: TodoItem) -> Unit,
 ) {
-    val itemState = remember { mutableStateOf(TodoItemSwipeState.None) }
+    var itemState by remember { mutableStateOf(TodoItemSwipeState.None) }
     val viewModel = VMCompositionLocal.current
 
     val dismissState = rememberSwipeToDismissBoxState(
@@ -42,15 +45,15 @@ fun SwipeToDoItem(
                     if (item.isCompleted) {
                         return@rememberSwipeToDismissBoxState false
                     }
-                    itemState.value = TodoItemSwipeState.Completed
+                    itemState = TodoItemSwipeState.Completed
                 }
 
                 SwipeToDismissBoxValue.EndToStart -> {
-                    itemState.value = TodoItemSwipeState.Deleted
+                    itemState = TodoItemSwipeState.Deleted
                 }
 
                 SwipeToDismissBoxValue.Settled -> {
-                    itemState.value = TodoItemSwipeState.None
+                    itemState = TodoItemSwipeState.None
                     return@rememberSwipeToDismissBoxState false
                 }
             }
@@ -59,16 +62,16 @@ fun SwipeToDoItem(
         positionalThreshold = { it * .51f }
     )
 
-    LaunchedEffect(itemState.value) {
-        when (itemState.value) {
+    LaunchedEffect(itemState) {
+        when (itemState) {
             TodoItemSwipeState.Completed -> {
-                kotlinx.coroutines.delay(TIMEOUT)
+                kotlinx.coroutines.delay((TIMEOUT / (dismissState.progress)).toLong())
                 viewModel.completeItem(item.id)
                 onSwipeFinished(item)
             }
 
             TodoItemSwipeState.Deleted -> {
-                kotlinx.coroutines.delay(TIMEOUT)
+                kotlinx.coroutines.delay((TIMEOUT / (dismissState.progress)).toLong())
                 viewModel.deleteItem(item.id)
                 onSwipeFinished(item)
             }
